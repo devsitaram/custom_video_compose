@@ -2,6 +2,7 @@
 
 package com.edu.videoplay.features
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.net.Uri
@@ -175,11 +176,19 @@ fun VideoPlayer(modifier: Modifier = Modifier) {
                 playbackState = state
 //                isLoading = state == Player.STATE_BUFFERING
             }
+
+            @SuppressLint("UnsafeOptInUsageError")
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                if (playbackState == Player.STATE_ENDED || playbackState == Player.STATE_IDLE) {
+                    // Video playback has ended or couldn't start
+                    // Implement your logic here to show the indicator
+                    Toast.makeText(context, "Hello Hello", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     )
 
-    LaunchedEffect(iconVisible, showSettingItem)
-    {
+    LaunchedEffect(iconVisible, showSettingItem) {
         if (iconVisible) {
             delay(4000) // Delay for 5 seconds
             iconVisible = false // Hide the icon after the delay
@@ -197,7 +206,8 @@ fun VideoPlayer(modifier: Modifier = Modifier) {
     val scope = rememberCoroutineScope()
 
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .height(275.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -205,7 +215,8 @@ fun VideoPlayer(modifier: Modifier = Modifier) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier//.height(275.dp)
-                .fillMaxWidth().background(Color.Black)
+                .fillMaxWidth()
+                .background(Color.Black)
         ) {
             AndroidView(
                 factory = {
